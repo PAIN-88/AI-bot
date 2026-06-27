@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Bot</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <style>
+    body {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+    }
+
+    #chat {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+    }
+
+    #input-area {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background: white;
+        padding: 10px;
+        border-top: 1px solid #ccc;
+    }
+</style>
+    
+</head>
+<body>
+   <div id="chat"></div>
+
+<div id="input-area">
+    <input type="text" id="userInput" placeholder="Enter Query" 
+           onkeydown="if(event.key === 'Enter') sendMessage()">
+    <button onclick="sendMessage()">Send</button>
+</div>
+
+   <script>
+    async function sendMessage() {
+        const message = document.getElementById("userInput").value
+
+
+        const response = await fetch("http://127.0.0.1:500/chat",{
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({message:message})
+        });
+
+        const data = await response.json()
+
+        document.getElementById("chat").innerHTML+=
+         `<p><b>Aap:</b> ${message}</p>
+          <p><b>Bot:</b></p>${marked.parse(data.reply)}`;
+         
+        document.getElementById("userInput").value = "";
+        document.getElementById("userInput").focus();
+        
+    }
+
+   </script>
+</body>
+</html>
